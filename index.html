@@ -159,6 +159,12 @@
       transition: transform .2s ease, background .2s ease, border-color .2s ease;
     }
 
+    .top-actions .architecture-button {
+      border-color: rgba(8,72,45,.28);
+      background: rgba(233,240,222,.86);
+      color: var(--forest);
+    }
+
     .top-actions button:hover { transform: translateY(-2px); border-color: rgba(8,72,45,.4); }
     .top-actions .top-primary { background: var(--forest); color: var(--white); border-color: var(--forest); }
     .top-actions .top-primary:hover { background: #0c5a39; }
@@ -1034,6 +1040,7 @@
 
       <div class="top-actions">
         <button type="button" class="project-info">Project Info</button>
+        <button type="button" class="architecture-button desktop-actions">System Architecture</button>
         <button type="button" class="top-primary desktop-actions" data-go-slide="1">Begin Presentation
           <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h11m-4-4 4 4-4 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
@@ -1231,6 +1238,9 @@
           window.location.href = `presentation.html#slide-${button.dataset.goSlide}`;
         });
       });
+      document.querySelector(".architecture-button").addEventListener("click", () => {
+        window.location.href = "system-architecture.html";
+      });
 
       function playVideo(item) {
         if (item.playPending || item.playFailed || !item.video.paused) return;
@@ -1273,9 +1283,11 @@
           if (Math.abs(coastVelocity) < 2) coastVelocity = 0;
         }
 
+        offset = ((offset % cycle) + cycle) % cycle;
+
         cards.forEach((item, index) => {
           const card = item.card;
-          const rawX = ((index * pitch + offset + cycle * 4) % cycle);
+          const rawX = (index * pitch + offset) % cycle;
           let x = rawX;
           if (x > center + cycle / 2) x -= cycle;
           const distance = Math.abs(x - center);
