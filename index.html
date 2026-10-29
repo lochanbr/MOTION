@@ -171,6 +171,21 @@
     .top-actions svg { width: .9cqw; height: .9cqw; }
     .mobile-begin { display: none !important; }
 
+    .header-institution-logo {
+      position: absolute;
+      z-index: 4;
+      top: 6.9cqw;
+      width: 9cqw;
+      height: 9cqw;
+      object-fit: contain;
+      border: 1px solid rgba(8,72,45,.12);
+      background: #fff;
+      box-shadow: 0 5px 16px rgba(8,72,45,.1);
+    }
+
+    .college-logo { left: 2.55cqw; border-radius: .65cqw; }
+    .university-logo { right: 2.55cqw; border-radius: 50%; }
+
     .hero {
       position: absolute;
       z-index: 2;
@@ -1047,6 +1062,8 @@
         <button type="button" class="top-primary mobile-begin" data-go-slide="1">Begin</button>
       </div>
     </header>
+    <img class="header-institution-logo college-logo" src="assets/kvg-college-logo.webp" alt="KVG College of Engineering logo">
+    <img class="header-institution-logo university-logo" src="assets/vtu-logo.webp" alt="Visvesvaraya Technological University logo">
 
     <section class="hero reveal reveal-hero" id="top">
       <div class="badge">
