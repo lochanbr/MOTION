@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#030508">
+  <meta name="description" content="NutriCare health and nutrition awareness project presentation.">
+  <title>NutriCare — Project Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: Inter, Arial, sans-serif;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      --white: #f7f8fb;
+      --muted: #a4a9b5;
+      --green: #8bd9b3;
+      --line: rgba(255,255,255,.13);
+      --panel: rgba(12,16,24,.76);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; background: #030508; }
+    body { overflow: hidden; color: var(--white); }
+    button, a { color: inherit; font: inherit; }
+    button { cursor: pointer; }
+
+    .deck {
+      position: relative;
+      height: 100vh;
+      height: 100dvh;
+      overflow-x: hidden;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+      scroll-snap-type: y mandatory;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,.2) transparent;
+      background: #030508;
+      isolation: isolate;
+    }
+
+    .space-canvas {
+      position: fixed;
+      z-index: -2;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .space-scrim {
+      position: fixed;
+      z-index: -1;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(3,5,8,.99) 0%, rgba(3,5,8,.91) 31%, rgba(3,5,8,.48) 52%, rgba(3,5,8,.03) 78%),
+        linear-gradient(0deg, rgba(3,5,8,.62), transparent 31%, transparent 77%, rgba(3,5,8,.34));
+    }
+
+    .deck-header {
+      position: fixed;
+      z-index: 5;
+      top: 0;
+      right: 0;
+      left: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 27px 5.2vw;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+      background: linear-gradient(180deg, rgba(3,5,8,.68), transparent);
+      pointer-events: none;
+    }
+
+    .deck-brand, .deck-home { pointer-events: auto; }
+    .deck-brand { display: flex; align-items: center; gap: 12px; color: var(--white); text-decoration: none; }
+    .brand-mark { width: 28px; height: 28px; fill: none; stroke: var(--green); stroke-width: 1.5; }
+    .brand-name { font-size: 15px; font-weight: 600; letter-spacing: -.03em; }
+    .brand-label { margin-left: 14px; padding-left: 15px; border-left: 1px solid var(--line); color: #9298a5; font-size: 12px; letter-spacing: .13em; text-transform: uppercase; }
+    .deck-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: rgba(255,255,255,.82);
+      background: rgba(255,255,255,.035);
+      font-size: 13px;
+      text-decoration: none;
+      transition: border-color .2s ease, background .2s ease;
+    }
+    .deck-home:hover { border-color: rgba(255,255,255,.35); background: rgba(255,255,255,.09); }
+
+    .slide {
+      position: relative;
+      display: flex;
+      align-items: center;
+      height: 100vh;
+      height: 100svh;
+      min-height: 100svh;
+      padding: 92px 5.2vw 68px;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      overflow: hidden;
+    }
+
+    .slide::after {
+      position: absolute;
+      right: 7vw;
+      bottom: 8%;
+      color: rgba(255,255,255,.08);
+      content: attr(data-number);
+      font: 600 clamp(120px, 17vw, 260px)/.8 "Inter Tight", Inter, sans-serif;
+      letter-spacing: -.09em;
+      pointer-events: none;
+    }
+
+    .slide-copy {
+      position: relative;
+      z-index: 1;
+      width: min(69vw, 950px);
+      animation: reveal .8s cubic-bezier(.2,.8,.2,1) both;
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 0 19px;
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before { width: 30px; height: 1px; background: currentColor; content: ""; }
+    h1, h2 { max-width: 900px; margin: 0; font: 500 clamp(48px, 4.7vw, 70px)/1.02 "Inter Tight", Inter, sans-serif; letter-spacing: -.055em; text-wrap: balance; }
+    .lead { max-width: 880px; margin: 17px 0 0; color: rgba(235,238,245,.74); font-size: 18px; line-height: 1.48; }
+    .body-copy { max-width: 900px; margin: 16px 0 0; color: #c2c6d0; font-size: 17px; line-height: 1.55; }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      max-width: 940px;
+      margin-top: 22px;
+    }
+
+    .content-card {
+      min-height: 96px;
+      padding: 14px 16px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 13px;
+      background: linear-gradient(135deg, rgba(19,24,33,.88), rgba(11,14,21,.58));
+      box-shadow: 0 12px 35px rgba(0,0,0,.13);
+      backdrop-filter: blur(7px);
+    }
+    .content-card .number { display: block; margin-bottom: 8px; color: var(--green); font-size: 11px; font-weight: 600; letter-spacing: .14em; }
+    .content-card h3 { margin: 0 0 5px; font-size: 16px; font-weight: 600; letter-spacing: -.02em; }
+    .content-card p { margin: 0; color: #b6bbc6; font-size: 14px; line-height: 1.42; }
+    .wide-card { grid-column: 1 / -1; min-height: auto; }
+
+    .intro-copy { max-width: 900px; }
+    .intro-copy p { margin: 0 0 10px; color: #c2c6d0; font-size: 16px; line-height: 1.48; }
+    .intro-copy p:last-child { margin-bottom: 0; }
+    .problem-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .objective-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .feature-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .technology-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .feature-grid .content-card, .technology-grid .content-card { min-height: 120px; }
+
+    .closing-line {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      max-width: 790px;
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-left: 2px solid var(--green);
+      background: linear-gradient(90deg, rgba(139,217,179,.12), transparent);
+      color: #dce1e8;
+      font-size: 15px;
+      line-height: 1.42;
+    }
+
+    .slide-meta { display: flex; flex-wrap: wrap; gap: 9px 22px; margin-top: 24px; color: #8f96a4; font-size: 13px; }
+    .slide-meta strong { color: #e4e8ef; font-weight: 500; }
+    .presentation-controls {
+      position: fixed;
+      z-index: 6;
+      right: 5.2vw;
+      bottom: 35px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 13px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 999px;
+      background: rgba(5,8,13,.75);
+      box-shadow: 0 10px 35px rgba(0,0,0,.24);
+      backdrop-filter: blur(12px);
+    }
+    .arrow-button {
+      display: grid;
+      width: 35px;
+      height: 35px;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 50%;
+      background: rgba(255,255,255,.04);
+      transition: background .2s ease, border-color .2s ease, opacity .2s ease;
+    }
+    .arrow-button:hover:not(:disabled) { border-color: rgba(139,217,179,.55); background: rgba(139,217,179,.13); }
+    .arrow-button:disabled { opacity: .35; cursor: default; }
+    .arrow-button svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .count { min-width: 53px; color: #fff; font-size: 12px; font-variant-numeric: tabular-nums; text-align: center; }
+    .count span { color: #798190; }
+    .dot-list { position: fixed; z-index: 4; top: 50%; right: 5.65vw; display: grid; gap: 11px; transform: translateY(-50%); }
+    .dot { width: 7px; height: 7px; padding: 0; border: 0; border-radius: 50%; background: rgba(255,255,255,.28); transition: transform .2s ease, background .2s ease; }
+    .dot[aria-current="true"] { transform: scale(1.6); background: var(--green); }
+    .progress { position: fixed; z-index: 7; top: 0; left: 0; width: 100%; height: 2px; background: rgba(255,255,255,.08); }
+    .progress span { display: block; width: 16.6667%; height: 100%; background: var(--green); transition: width .3s ease; }
+
+    @keyframes reveal {
+      from { opacity: 0; transform: translateY(18px); filter: blur(5px); }
+      to { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
+    .slide.is-entering .slide-copy { animation: reveal .7s cubic-bezier(.2,.8,.2,1) both; }
+    .slide.is-entering .content-card { animation: reveal .65s cubic-bezier(.2,.8,.2,1) both; }
+    .slide.is-entering .content-card:nth-child(2) { animation-delay: 80ms; }
+    .slide.is-entering .content-card:nth-child(3) { animation-delay: 150ms; }
+    .slide.is-entering .content-card:nth-child(4) { animation-delay: 220ms; }
+    .slide.is-entering .content-card:nth-child(5) { animation-delay: 290ms; }
+    .slide.is-entering .content-card:nth-child(6) { animation-delay: 360ms; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck" id="deck" tabindex="0" aria-label="NutriCare six-slide project presentation">
+    <canvas class="space-canvas" id="space-canvas" aria-hidden="true"></canvas>
+    <div class="space-scrim" aria-hidden="true"></div>
+    <header class="deck-header">
+      <a class="deck-brand" href="index.html" aria-label="Return to NutriCare home">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M25 5C14 5.5 6 9 6 17c0 5 3 8 7 8 7 0 11-8 12-20Z"/><path d="M7 27c4-7 8-11 15-16"/></svg>
+        <span class="brand-name">NutriCare</span><span class="brand-label">Project Presentation</span>
+      </a>
+      <a class="deck-home" href="index.html"><span aria-hidden="true">←</span> Back to home</a>
+    </header>
+
+    <section class="slide" id="slide-1" data-number="01" aria-label="Slide 1: Introduction to NutriCare">
+      <div class="slide-copy">
+        <p class="eyebrow">01 · Introduction</p>
+        <h1>Better Nutrition Begins with Awareness</h1>
+        <p class="lead">Understanding what we eat is an important step towards making informed decisions about our health and everyday lifestyle.</p>
+        <div class="intro-copy" style="margin-top:22px">
+          <p>Food contributes to our energy, growth and general well-being. Learning about food groups, balanced meals, hydration, hygiene and physical activity can help people make informed everyday choices.</p>
+          <p>NutriCare is a proposed educational website that brings clear, practical health and nutrition information together with interactive learning and useful resources.</p>
+        </div>
+        <div class="content-grid">
+          <article class="content-card"><span class="number">01</span><h3>Nutrition knowledge</h3><p>Understand food groups, nutrients and balanced meal choices.</p></article>
+          <article class="content-card"><span class="number">02</span><h3>Everyday wellness</h3><p>Explore hydration, sleep, movement and hygiene practices.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-2" data-number="02" aria-label="Slide 2: Problem statement">
+      <div class="slide-copy">
+        <p class="eyebrow">02 · Problem Statement</p>
+        <h2>Making Nutrition Awareness Easier to Access</h2>
+        <p class="lead">Useful health information is most valuable when it is understandable, practical and easy to explore.</p>
+        <div class="content-grid problem-grid">
+          <article class="content-card"><span class="number">01</span><h3>Scattered information</h3><p>People may need to search several sources for guidance on food, hydration and healthy routines. NutriCare brings core learning topics into one organised place.</p></article>
+          <article class="content-card"><span class="number">02</span><h3>Complex explanations</h3><p>Nutrition terms can feel difficult without familiar examples. Clear language and everyday food examples can make concepts easier to understand.</p></article>
+          <article class="content-card"><span class="number">03</span><h3>Limited interaction</h3><p>Static materials may not let learners practise or check understanding. Quizzes with immediate explanations can support active learning.</p></article>
+          <article class="content-card"><span class="number">04</span><h3>Applying healthy habits</h3><p>Knowing about healthy practices does not ensure they become routines. A simple tracker can help users record actions and reflect on them.</p></article>
+        </div>
+        <div class="closing-line">NutriCare addresses the need for an accessible, understandable and interactive platform for health and nutrition awareness.</div>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-3" data-number="03" aria-label="Slide 3: Project objectives and scope">
+      <div class="slide-copy">
+        <p class="eyebrow">03 · Objectives &amp; Scope</p>
+        <h2>What NutriCare Aims to Achieve</h2>
+        <p class="lead">The project makes health education understandable, engaging and accessible through a practical website.</p>
+        <div class="content-grid objective-grid">
+          <article class="content-card"><span class="number">01</span><h3>Improve nutrition awareness</h3><p>Explain balanced diets, food groups, essential nutrients and sensible food choices.</p></article>
+          <article class="content-card"><span class="number">02</span><h3>Encourage healthy decisions</h3><p>Share realistic guidance on hydration, activity, sleep, food safety and hygiene.</p></article>
+          <article class="content-card"><span class="number">03</span><h3>Support interactive learning</h3><p>Offer a knowledge quiz with immediate feedback and clear explanations.</p></article>
+          <article class="content-card"><span class="number">04</span><h3>Build habit awareness</h3><p>Let visitors record selected practices and reflect on daily progress.</p></article>
+          <article class="content-card wide-card"><span class="number">PROJECT SCOPE</span><h3>Educational website, not a medical service</h3><p>The initial scope includes responsive learning pages, practical meal examples, a quiz, a basic habit tracker and educational resources. It does not diagnose conditions or replace advice from qualified health professionals.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-4" data-number="04" aria-label="Slide 4: NutriCare website features">
+      <div class="slide-copy">
+        <p class="eyebrow">04 · Website Features</p>
+        <h2>Explore a Healthier Way to Learn</h2>
+        <p class="lead">NutriCare brings nutrition education, practical health guidance and interactive learning into one website.</p>
+        <div class="content-grid feature-grid">
+          <article class="content-card"><span class="number">01</span><h3>Nutrition guide</h3><p>Learn about balanced diets, food groups and everyday ingredients such as fruits, vegetables, grains and pulses.</p></article>
+          <article class="content-card"><span class="number">02</span><h3>Daily health tips</h3><p>Explore clear guidance on hydration, movement, sleep, food safety and personal hygiene.</p></article>
+          <article class="content-card"><span class="number">03</span><h3>Knowledge quiz</h3><p>Answer questions, receive explanations and review topics that need more attention.</p></article>
+          <article class="content-card"><span class="number">04</span><h3>Habit tracker</h3><p>Record selected daily practices and view completion status without judgement or medical assessment.</p></article>
+          <article class="content-card"><span class="number">05</span><h3>Learning resources</h3><p>Find topic-organised guides, educational posters and useful material from credible sources.</p></article>
+        </div>
+        <div class="closing-line">Visitors can read, explore, practise their understanding, receive feedback and return to topics they find useful.</div>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-5" data-number="05" aria-label="Slide 5: Technologies and development tools">
+      <div class="slide-copy">
+        <p class="eyebrow">05 · Technologies</p>
+        <h2>The Technology Behind NutriCare</h2>
+        <p class="lead">The current project is a standalone website using HTML, CSS and JavaScript for a responsive, interactive learning experience.</p>
+        <div class="content-grid technology-grid">
+          <article class="content-card"><span class="number">01 · STRUCTURE</span><h3>HTML</h3><p>Organises semantic sections, headings, navigation, educational content and controls.</p></article>
+          <article class="content-card"><span class="number">02 · PRESENTATION</span><h3>CSS</h3><p>Creates the visual design, page layouts, responsive styling and smooth transitions.</p></article>
+          <article class="content-card"><span class="number">03 · INTERACTION</span><h3>JavaScript</h3><p>Supports presentation navigation, carousel motion and interactive website behaviour.</p></article>
+          <article class="content-card"><span class="number">04 · VISUALS</span><h3>Canvas &amp; animation</h3><p>The presentation uses a lightweight animated canvas and CSS transitions for its orbital visuals and slide entrances.</p></article>
+          <article class="content-card"><span class="number">05 · DATA</span><h3>Browser storage</h3><p>Local storage may support simple same-device records; a database is optional and is not part of this presentation page.</p></article>
+          <article class="content-card"><span class="number">06 · DELIVERY</span><h3>Development tools</h3><p>Git and GitHub can manage source code; a suitable static host can publish the website when required.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-6" data-number="06" aria-label="Slide 6: Expected outcomes and conclusion">
+      <div class="slide-copy">
+        <p class="eyebrow">06 · Expected Outcomes</p>
+        <h2>Building a More Nutrition-Aware Community</h2>
+        <p class="lead">NutriCare aims to make useful health and nutrition information easier to explore, understand and apply in everyday life.</p>
+        <div class="content-grid">
+          <article class="content-card"><span class="number">01</span><h3>Improved understanding</h3><p>Learning pages and quiz feedback are intended to help visitors revisit nutrition and healthy-lifestyle topics.</p></article>
+          <article class="content-card"><span class="number">02</span><h3>Accessible resources</h3><p>A topic-organised website can offer a convenient place to explore guides, tips and educational material.</p></article>
+          <article class="content-card"><span class="number">03</span><h3>Active learning</h3><p>Quizzes and a simple habit tracker can encourage participation and personal reflection.</p></article>
+          <article class="content-card"><span class="number">04</span><h3>Community awareness</h3><p>Clear information may help people consider practical choices within their own routines.</p></article>
+        </div>
+        <div class="closing-line"><strong>Learn Better. Eat Better. Live Better.</strong>&nbsp; NutriCare is an educational awareness project; these are intended outcomes, not measured health results.</div>
+        <div class="slide-meta"><span>KVG College of Engineering, Sullia, D.K.</span><span>Department of Computer Science and Engineering</span><span>Academic Year: 2025–2026</span></div>
+      </div>
+    </section>
+
+    <nav class="dot-list" aria-label="Choose a presentation slide">
+      <button class="dot" type="button" aria-label="Go to slide 1" aria-current="true" data-index="0"></button>
+      <button class="dot" type="button" aria-label="Go to slide 2" data-index="1"></button>
+      <button class="dot" type="button" aria-label="Go to slide 3" data-index="2"></button>
+      <button class="dot" type="button" aria-label="Go to slide 4" data-index="3"></button>
+      <button class="dot" type="button" aria-label="Go to slide 5" data-index="4"></button>
+      <button class="dot" type="button" aria-label="Go to slide 6" data-index="5"></button>
+    </nav>
+  </main>
+  <div class="progress" aria-hidden="true"><span id="progress-fill"></span></div>
+  <nav class="presentation-controls" aria-label="Slide navigation">
+    <button class="arrow-button" type="button" id="previous-slide" aria-label="Previous slide">
+      <svg viewBox="0 0 20 20"><path d="m12 4-6 6 6 6M6 10h11"/></svg>
+    </button>
+    <div class="count" aria-live="polite"><strong id="current-slide">01</strong> <span>/ 06</span></div>
+    <button class="arrow-button" type="button" id="next-slide" aria-label="Next slide">
+      <svg viewBox="0 0 20 20"><path d="m8 4 6 6-6 6m6-6H3"/></svg>
+    </button>
+  </nav>
+  <script>
+    (() => {
+      "use strict";
+      const deck = document.querySelector(".deck");
+      const slides = [...document.querySelectorAll(".slide")];
+      const dots = [...document.querySelectorAll(".dot")];
+      const current = document.querySelector("#current-slide");
+      const progress = document.querySelector("#progress-fill");
+      const previous = document.querySelector("#previous-slide");
+      const next = document.querySelector("#next-slide");
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      let activeIndex = 0;
+      let scrollPending = false;
+      let wheelLock = false;
+      let wheelDelta = 0;
+      let wheelTimer = 0;
+
+      function goTo(index) {
+        const target = slides[Math.max(0, Math.min(slides.length - 1, index))];
+        target.scrollIntoView({ behavior: reduceMotion.matches ? "auto" : "smooth", block: "start" });
+      }
+
+      function updateActive() {
+        scrollPending = false;
+        const center = window.innerHeight / 2;
+        let closest = 0;
+        let distance = Infinity;
+        slides.forEach((slide, index) => {
+          const rect = slide.getBoundingClientRect();
+          const currentDistance = Math.abs(rect.top + rect.height / 2 - center);
+          if (currentDistance < distance) {
+            distance = currentDistance;
+            closest = index;
+          }
+        });
+        activeIndex = closest;
+        current.textContent = String(closest + 1).padStart(2, "0");
+        dots.forEach((dot, index) => {
+          if (index === closest) dot.setAttribute("aria-current", "true");
+          else dot.removeAttribute("aria-current");
+        });
+        previous.disabled = closest === 0;
+        next.disabled = closest === slides.length - 1;
+        progress.style.width = `${((closest + 1) / slides.length) * 100}%`;
+      }
+
+      function scheduleUpdate() {
+        if (scrollPending) return;
+        scrollPending = true;
+        requestAnimationFrame(updateActive);
+      }
+
+      previous.addEventListener("click", () => goTo(activeIndex - 1));
+      next.addEventListener("click", () => goTo(activeIndex + 1));
+      dots.forEach((dot) => dot.addEventListener("click", () => goTo(Number(dot.dataset.index))));
+      deck.addEventListener("scroll", scheduleUpdate, { passive: true });
+      deck.addEventListener("wheel", (event) => {
+        if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+        event.preventDefault();
+        window.clearTimeout(wheelTimer);
+        wheelTimer = window.setTimeout(() => {
+          wheelLock = false;
+          wheelDelta = 0;
+        }, 650);
+        if (wheelLock) return;
+        wheelDelta += event.deltaY;
+        if (Math.abs(wheelDelta) >= 24) {
+          wheelLock = true;
+          goTo(activeIndex + (wheelDelta > 0 ? 1 : -1));
+          wheelDelta = 0;
+        }
+      }, { passive: false });
+      deck.addEventListener("keydown", (event) => {
+        const directions = { ArrowDown: 1, PageDown: 1, ArrowUp: -1, PageUp: -1 };
+        if (directions[event.key] !== undefined) {
+          event.preventDefault();
+          goTo(activeIndex + directions[event.key]);
+        } else if (event.key === "Home") {
+          event.preventDefault();
+          goTo(0);
+        } else if (event.key === "End") {
+          event.preventDefault();
+          goTo(slides.length - 1);
+        }
+      });
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) entry.target.classList.add("is-entering");
+        });
+        scheduleUpdate();
+      }, { root: deck, threshold: .55 });
+      slides.forEach((slide) => observer.observe(slide));
+      window.addEventListener("resize", scheduleUpdate);
+      if (location.hash) {
+        const target = document.querySelector(location.hash);
+        if (target && target.classList.contains("slide")) requestAnimationFrame(() => target.scrollIntoView());
+      }
+
+      const canvas = document.querySelector("#space-canvas");
+      const context = canvas.getContext("2d");
+      const stars = [];
+      let width = 0;
+      let height = 0;
+      let ratio = 1;
+      let elapsed = 0;
+      let lastFrame = 0;
+      let pointerX = 0;
+      let pointerY = 0;
+      let visible = true;
+      const orbitFocus = { x: .72, y: .51 };
+
+      function resizeCanvas() {
+        ratio = Math.min(window.devicePixelRatio || 1, 2);
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = Math.round(width * ratio);
+        canvas.height = Math.round(height * ratio);
+        context.setTransform(ratio, 0, 0, ratio, 0, 0);
+        stars.length = 0;
+        const random = (() => {
+          let seed = 19381;
+          return () => {
+            seed = (seed * 1664525 + 1013904223) % 4294967296;
+            return seed / 4294967296;
+          };
+        })();
+        const count = Math.min(1150, Math.round(width * height / 1150));
+        for (let index = 0; index < count; index += 1) {
+          stars.push({
+            x: random() * width,
+            y: random() * height,
+            radius: .25 + random() * 1.15,
+            alpha: .2 + random() * .65,
+            depth: .3 + random() * 1.8
+          });
+        }
+      }
+
+      function drawFrame(time) {
+        if (!visible) {
+          requestAnimationFrame(drawFrame);
+          return;
+        }
+        const delta = lastFrame ? Math.min((time - lastFrame) / 1000, .04) : 0;
+        lastFrame = time;
+        if (!reduceMotion.matches) elapsed += delta;
+        context.clearRect(0, 0, width, height);
+        const shiftX = pointerX * 9;
+        const shiftY = pointerY * 7;
+        stars.forEach((star) => {
+          const x = (star.x + shiftX * star.depth + width) % width;
+          const y = (star.y + shiftY * star.depth + height) % height;
+          const pulse = .76 + .24 * Math.sin(elapsed * .7 + star.x);
+          context.fillStyle = `rgba(218,229,255,${star.alpha * pulse})`;
+          context.beginPath();
+          context.arc(x, y, star.radius, 0, Math.PI * 2);
+          context.fill();
+        });
+
+        const cx = width * orbitFocus.x - shiftX * .3;
+        const cy = height * orbitFocus.y - shiftY * .3;
+        const radius = Math.min(width * .45, height * .53);
+        const rotation = -.24;
+        context.save();
+        context.translate(cx, cy);
+        context.rotate(rotation);
+        context.globalCompositeOperation = "lighter";
+        const bodies = [
+          { scale: .24, speed: 1.3, size: 2.5, color: "#e5d7b8", rgb: "229,215,184", eccentricity: .12, angle: -.54, tilt: .72, phase: 1.1 },
+          { scale: .38, speed: .92, size: 3.2, color: "#63d8ff", rgb: "99,216,255", eccentricity: .17, angle: .23, tilt: .56, phase: 4.4 },
+          { scale: .54, speed: .7, size: 4.1, color: "#ff5248", rgb: "255,82,72", eccentricity: .2, angle: .68, tilt: .72, phase: 2.35 },
+          { scale: .73, speed: .46, size: 3.5, color: "#f2c85b", rgb: "242,200,91", eccentricity: .24, angle: -.28, tilt: .46, phase: 5.5 },
+          { scale: .94, speed: .31, size: 5.5, color: "#ffb544", rgb: "255,181,68", eccentricity: .16, angle: .19, tilt: .61, phase: 3.2 }
+        ];
+        bodies.forEach((body, index) => {
+          const rx = radius * body.scale;
+          const ry = rx * body.tilt;
+          const orbitPoint = (angle) => {
+            const x = (Math.cos(angle) - body.eccentricity) * rx;
+            const y = Math.sin(angle) * ry;
+            return {
+              x: x * Math.cos(body.angle) - y * Math.sin(body.angle),
+              y: x * Math.sin(body.angle) + y * Math.cos(body.angle)
+            };
+          };
+          const angle = elapsed * body.speed + body.phase;
+          const planet = orbitPoint(angle);
+          context.beginPath();
+          for (let sample = 0; sample <= 180; sample += 1) {
+            const point = orbitPoint(sample / 180 * Math.PI * 2);
+            if (sample === 0) context.moveTo(point.x, point.y);
+            else context.lineTo(point.x, point.y);
+          }
+          context.closePath();
+          context.strokeStyle = `rgba(${body.rgb},${index === 0 ? .28 : .36})`;
+          context.lineWidth = 1;
+          context.stroke();
+
+          let previousPoint = null;
+          const trailSweep = Math.PI * 1.75;
+          for (let sample = 0; sample <= 80; sample += 1) {
+            const progress = sample / 80;
+            const point = orbitPoint(angle - trailSweep * (1 - progress));
+            if (previousPoint) {
+              context.beginPath();
+              context.moveTo(previousPoint.x, previousPoint.y);
+              context.lineTo(point.x, point.y);
+              context.strokeStyle = `rgba(${body.rgb},${.06 + .78 * progress * progress})`;
+              context.lineWidth = .8 + 1.8 * progress;
+              context.lineCap = "round";
+              context.stroke();
+            }
+            previousPoint = point;
+          }
+          const glow = context.createRadialGradient(planet.x, planet.y, 0, planet.x, planet.y, body.size * 8);
+          glow.addColorStop(0, body.color + "ff");
+          glow.addColorStop(.24, body.color + "a8");
+          glow.addColorStop(1, body.color + "00");
+          context.fillStyle = glow;
+          context.beginPath();
+          context.arc(planet.x, planet.y, body.size * 8, 0, Math.PI * 2);
+          context.fill();
+          context.fillStyle = body.color;
+          context.shadowBlur = body.size * 2.5;
+          context.shadowColor = body.color;
+          context.beginPath();
+          context.arc(planet.x, planet.y, body.size, 0, Math.PI * 2);
+          context.fill();
+          context.shadowBlur = 0;
+        });
+        const sunBeam = context.createLinearGradient(-radius * 1.05, radius * .76, 0, 0);
+        sunBeam.addColorStop(0, "rgba(255,207,128,0)");
+        sunBeam.addColorStop(.82, "rgba(255,218,156,.22)");
+        sunBeam.addColorStop(1, "rgba(255,248,225,.82)");
+        context.strokeStyle = sunBeam;
+        context.lineWidth = 2.4;
+        context.beginPath();
+        context.moveTo(-radius * 1.05, radius * .76);
+        context.lineTo(0, 0);
+        context.stroke();
+        context.lineWidth = .7;
+        context.strokeStyle = "rgba(255,243,216,.38)";
+        context.beginPath();
+        context.moveTo(-radius * .94, radius * .68);
+        context.lineTo(0, 0);
+        context.stroke();
+        const sunPulse = .92 + .08 * Math.sin(elapsed * 2.4);
+        const sunGlow = context.createRadialGradient(0, 0, 1, 0, 0, radius * .25);
+        sunGlow.addColorStop(0, "rgba(255,255,245,1)");
+        sunGlow.addColorStop(.035, "rgba(255,247,218,.98)");
+        sunGlow.addColorStop(.12, "rgba(255,192,103,.45)");
+        sunGlow.addColorStop(1, "rgba(255,151,72,0)");
+        context.fillStyle = sunGlow;
+        context.beginPath();
+        context.arc(0, 0, radius * .25, 0, Math.PI * 2);
+        context.fill();
+        context.fillStyle = "#fffefa";
+        context.shadowBlur = 34 * sunPulse;
+        context.shadowColor = "#ffc26e";
+        context.beginPath();
+        context.arc(0, 0, 8.5 * sunPulse, 0, Math.PI * 2);
+        context.fill();
+        context.shadowBlur = 0;
+        context.globalCompositeOperation = "source-over";
+        context.restore();
+        requestAnimationFrame(drawFrame);
+      }
+
+      window.addEventListener("resize", resizeCanvas);
+      window.addEventListener("pointermove", (event) => {
+        pointerX = (event.clientX / width - .5) * 2;
+        pointerY = (event.clientY / height - .5) * 2;
+      }, { passive: true });
+      document.addEventListener("visibilitychange", () => { visible = !document.hidden; });
+      resizeCanvas();
+      requestAnimationFrame(drawFrame);
+      updateActive();
+    })();
+  </script>
+</body>
+</html>
